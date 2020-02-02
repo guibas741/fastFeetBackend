@@ -22,44 +22,48 @@ class RecipientController {
     return res.json(recipient);
   }
 
-  /*  async update(req, res) {
+  async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),
-      email: Yup.string().email(),
-      oldPassword: Yup.string().min(6),
-      password: Yup.string()
-        .min(6)
-        .when('oldPassword', (oldPassword, field) =>
-          oldPassword ? field.required() : field
-        ),
-      confirmPassword: Yup.string().when('password', (password, field) =>
-        password ? field.required().oneOf([Yup.ref('password')]) : field
-      ),
+      street: Yup.string(),
+      number: Yup.number(),
+      complement: Yup.string(),
+      state: Yup.string(),
+      city: Yup.string(),
+      zip_code: Yup.string(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { email, oldPassword } = req.body;
-    const user = await User.findByPk(req.userId);
+    const { id } = req.params;
+    const recipient = await Recipient.findByPk(id);
 
-    if (email && email !== user.email) {
-      const userExists = await User.findOne({ where: { email } });
-
-      if (userExists) {
-        return res.status(400).json({ error: 'User already exists' });
-      }
+    if (!recipient) {
+      return res.status(400).json({ error: 'Recipient does not exists' });
     }
 
-    if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return res.status(401).json({ error: 'Password does not match' });
-    }
+    const {
+      name,
+      street,
+      number,
+      complement,
+      state,
+      city,
+      zip_code,
+    } = await recipient.update(req.body);
 
-    const { id, name } = await user.update(req.body);
-
-    return res.json({ id, name, email });
-  } */
+    return res.json({
+      name,
+      street,
+      number,
+      complement,
+      state,
+      city,
+      zip_code,
+    });
+  }
 }
 
 export default new RecipientController();
