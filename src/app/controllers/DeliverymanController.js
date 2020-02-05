@@ -48,6 +48,7 @@ class DeliverymanController {
       email: Yup.string(),
     });
 
+    console.log(req.body);
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
@@ -59,7 +60,7 @@ class DeliverymanController {
       return res.status(400).json({ error: 'Deliveryman does not exists' });
     }
 
-    const { name, email } = req.body;
+    const { name, email, avatar_id } = req.body;
 
     if (email && email !== deliveryman.email) {
       const deliverymanExists = await Deliveryman.findOne({
@@ -71,7 +72,11 @@ class DeliverymanController {
       }
     }
 
-    const deliverymanUpdated = await deliveryman.update({ name, email });
+    const deliverymanUpdated = await deliveryman.update({
+      name,
+      email,
+      avatar_id,
+    });
 
     return res.json(deliverymanUpdated);
   }
