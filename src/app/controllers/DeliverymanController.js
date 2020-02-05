@@ -3,7 +3,15 @@ import Deliveryman from '../models/Deliveryman';
 
 class DeliverymanController {
   async index(req, res) {
-    return res.json();
+    const { page = 1 } = req.query;
+    const deliverymen = await Deliveryman.findAll({
+      order: ['id'],
+      attributes: ['id', 'name', 'email'],
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
+
+    return res.json(deliverymen);
   }
 
   async store(req, res) {
