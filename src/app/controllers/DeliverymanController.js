@@ -6,7 +6,7 @@ class DeliverymanController {
     const { page = 1 } = req.query;
     const deliverymen = await Deliveryman.findAll({
       order: ['id'],
-      attributes: ['id', 'name', 'email'],
+      attributes: ['id', 'name', 'email', 'avatar_id'],
       limit: 20,
       offset: (page - 1) * 20,
     });
@@ -48,7 +48,6 @@ class DeliverymanController {
       email: Yup.string(),
     });
 
-    console.log(req.body);
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
