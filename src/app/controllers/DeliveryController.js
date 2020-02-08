@@ -114,6 +114,21 @@ class DeliveryController {
 
     return res.json(deliveryUpdated);
   }
+
+  async delete(req, res) {
+    const { id } = req.params;
+    const delivery = await Delivery.findByPk(id);
+
+    if (!delivery) {
+      return res.status(400).json({ error: 'Delivery does not exists' });
+    }
+
+    await Delivery.destroy({
+      where: { id },
+    });
+
+    return res.status(200).json({ sucess: 'Delivery deleted' });
+  }
 }
 
 export default new DeliveryController();
