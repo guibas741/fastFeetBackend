@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import Deliveryman from '../models/Deliveryman';
 import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
+import File from '../models/File';
 
 class DeliverymanPackagesController {
   async index(req, res) {
@@ -71,6 +72,11 @@ class DeliverymanPackagesController {
             'state',
             'zip_code',
           ],
+        },
+        {
+          model: File,
+          as: 'signature',
+          attributes: ['id', 'path'],
         },
       ],
     });
