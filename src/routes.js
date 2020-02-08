@@ -33,6 +33,10 @@ routes.put('/deliveryman/:id', DeliverymanController.update);
 routes.delete('/deliveryman/:id', DeliverymanController.delete);
 
 routes.get('/deliveryman/:id/deliveries', DeliverymanPackagesController.index);
+routes.get(
+  '/deliveryman/:id/deliveriesEnded',
+  DeliverymanPackagesController.listEndedDeliveries
+);
 
 routes.get('/deliveries', DeliveryController.index);
 routes.post('/deliveries', DeliveryController.store);
