@@ -127,7 +127,7 @@ class DeliveryController {
       where: { id },
     });
 
-    return res.status(200).json({ sucess: 'Delivery deleted' });
+    return res.status(200).json({ success: 'Delivery deleted' });
   }
 }
 

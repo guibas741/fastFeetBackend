@@ -93,7 +93,7 @@ class DeliverymanController {
       where: { id },
     });
 
-    return res.status(200).json({ sucess: 'Deliveryman deleted' });
+    return res.status(200).json({ success: 'Deliveryman deleted' });
   }
 }
 
