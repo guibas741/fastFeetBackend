@@ -37,6 +37,15 @@ routes.get(
   '/deliveryman/:id/deliveriesEnded',
   DeliverymanPackagesController.listEndedDeliveries
 );
+routes.put(
+  '/deliveryman/:id/deliveries/:delivery_id',
+  DeliverymanPackagesController.startDelivery
+);
+routes.put(
+  '/deliveryman/:id/deliveries/:delivery_id/end',
+  upload.single('file'),
+  DeliverymanPackagesController.endDelivery
+);
 
 routes.get('/deliveries', DeliveryController.index);
 routes.post('/deliveries', DeliveryController.store);
