@@ -1,5 +1,13 @@
 import { Op } from 'sequelize';
-import { isAfter, parseISO, startOfDay, endOfDay } from 'date-fns';
+import {
+  isAfter,
+  parseISO,
+  startOfDay,
+  endOfDay,
+  setSeconds,
+  setMinutes,
+  setHours,
+} from 'date-fns';
 import Deliveryman from '../models/Deliveryman';
 import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
@@ -105,6 +113,16 @@ class DeliverymanPackagesController {
       return res
         .status(401)
         .json({ error: 'Start date cant be in the future' });
+    }
+
+    const validHour = !!(
+      start_date.getHours() >= 8 && start_date.getHours() <= 18
+    );
+
+    if (!validHour) {
+      return res.status(401).json({
+        error: 'Deliveries can only start after 08:00 and before 18:00',
+      });
     }
 
     const todaysDelivery = await Delivery.findAll({
