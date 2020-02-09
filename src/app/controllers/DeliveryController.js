@@ -3,6 +3,8 @@ import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
 
+import Mail from '../../lib/Mail';
+
 class DeliveryController {
   async index(req, res) {
     const { page = 1 } = req.query;
@@ -45,9 +47,9 @@ class DeliveryController {
       return res.status(401).json({ error: 'Recipient does not exists' });
     }
 
-    const existsDeliveryman = await Deliveryman.findByPk(deliveryman_id);
+    const deliveryman = await Deliveryman.findByPk(deliveryman_id);
 
-    if (!existsDeliveryman) {
+    if (!deliveryman) {
       return res.status(401).json({ error: 'Deliveryman does not exists' });
     }
 
@@ -56,6 +58,12 @@ class DeliveryController {
       recipient_id,
       deliveryman_id,
       signature_id,
+    });
+
+    await Mail.sendMail({
+      to: `${deliveryman.name} <${deliveryman.email}`,
+      subject: 'Nova encomenda',
+      text: 'Nova encomenda!!',
     });
 
     return res.json(delivery);
