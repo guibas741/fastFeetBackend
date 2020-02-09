@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { parseISO, isAfter } from 'date-fns';
 import Delivery from '../models/Delivery';
 import DeliveryProblems from '../models/DeliveryProblems';
 
@@ -8,7 +9,14 @@ class DeliveryProblemsController {
 
     const deliveriesProblems = await DeliveryProblems.findAll({
       order: ['id'],
-      attributes: ['id', 'delivery_id', 'description'],
+      attributes: ['id', 'description'],
+      include: [
+        {
+          model: Delivery,
+          as: 'delivery',
+          attributes: ['id', 'product'],
+        },
+      ],
       limit: 20,
       offset: (page - 1) * 20,
     });
@@ -31,7 +39,14 @@ class DeliveryProblemsController {
         delivery_id,
       },
       order: ['id'],
-      attributes: ['id', 'delivery_id', 'description'],
+      attributes: ['id', 'description'],
+      include: [
+        {
+          model: Delivery,
+          as: 'delivery',
+          attributes: ['id', 'product'],
+        },
+      ],
       limit: 20,
       offset: (page - 1) * 20,
     });
@@ -64,6 +79,45 @@ class DeliveryProblemsController {
     });
 
     return res.json(deliveryProblem);
+  }
+
+  async cancel(req, res) {
+    const schema = Yup.object().shape({
+      canceled_at: Yup.date().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
+    const { problem_id } = req.params;
+    const problem = await DeliveryProblems.findByPk(problem_id);
+
+    if (!problem) {
+      return res.status(400).json({ error: 'Problem does not exists' });
+    }
+
+    const canceled_at = parseISO(req.body.canceled_at);
+
+    if (isAfter(canceled_at, new Date())) {
+      return res
+        .status(401)
+        .json({ error: 'Cancelled date cant be in the future' });
+    }
+
+    const delivery = await Delivery.findByPk(problem.delivery_id);
+
+    if (!delivery) {
+      return res.status(400).json({ error: 'Delivery does not exists' });
+    }
+
+    if (delivery.canceled_at !== null) {
+      return res.status(400).json({ error: 'Delivery already canceled' });
+    }
+
+    const deliveryCanceled = await delivery.update({ canceled_at });
+
+    return res.json(deliveryCanceled);
   }
 }
 
