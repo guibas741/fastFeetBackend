@@ -4,7 +4,16 @@ import DeliveryProblems from '../models/DeliveryProblems';
 
 class DeliveryProblemsController {
   async index(req, res) {
-    return res.json({ ola: 'enfermeira' });
+    const { page = 1 } = req.query;
+
+    const deliveriesProblems = await DeliveryProblems.findAll({
+      order: ['id'],
+      attributes: ['id', 'delivery_id', 'description'],
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
+
+    return res.json(deliveriesProblems);
   }
 
   async store(req, res) {
