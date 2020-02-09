@@ -1,13 +1,5 @@
 import { Op } from 'sequelize';
-import {
-  isAfter,
-  parseISO,
-  startOfDay,
-  endOfDay,
-  setSeconds,
-  setMinutes,
-  setHours,
-} from 'date-fns';
+import { isAfter, parseISO, startOfDay, endOfDay } from 'date-fns';
 import Deliveryman from '../models/Deliveryman';
 import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
