@@ -20,6 +20,23 @@ const upload = multer(multerConfig);
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 
+/* FUNCIONALIDADES DO ENTREGADOR QUE NAO ESTA CADASTRADO */
+routes.get('/deliveryman/:id/deliveries', DeliverymanPackagesController.index);
+routes.put(
+  '/deliveryman/:id/deliveries/:delivery_id',
+  DeliverymanPackagesController.startDelivery
+);
+routes.put(
+  '/deliveryman/:id/deliveries/:delivery_id/end',
+  upload.single('file'),
+  DeliverymanPackagesController.endDelivery
+);
+routes.post(
+  '/delivery/:delivery_id/problems',
+  DeliveryProblemsController.store
+);
+
+/* FUNCIONALIDADES DO ADMINSTRADOR */
 routes.use(authMiddleware);
 routes.put('/users', UserController.update);
 
@@ -33,19 +50,9 @@ routes.post('/deliveryman', DeliverymanController.store);
 routes.put('/deliveryman/:id', DeliverymanController.update);
 routes.delete('/deliveryman/:id', DeliverymanController.delete);
 
-routes.get('/deliveryman/:id/deliveries', DeliverymanPackagesController.index);
 routes.get(
   '/deliveryman/:id/deliveriesEnded',
   DeliverymanPackagesController.listEndedDeliveries
-);
-routes.put(
-  '/deliveryman/:id/deliveries/:delivery_id',
-  DeliverymanPackagesController.startDelivery
-);
-routes.put(
-  '/deliveryman/:id/deliveries/:delivery_id/end',
-  upload.single('file'),
-  DeliverymanPackagesController.endDelivery
 );
 
 routes.get('/deliveries', DeliveryController.index);
@@ -57,10 +64,6 @@ routes.get('/deliveries/problems', DeliveryProblemsController.index);
 routes.get(
   '/delivery/:delivery_id/problems',
   DeliveryProblemsController.listProblems
-);
-routes.post(
-  '/delivery/:delivery_id/problems',
-  DeliveryProblemsController.store
 );
 routes.delete(
   '/problem/:problem_id/cancel-delivery',
