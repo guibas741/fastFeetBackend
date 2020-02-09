@@ -2,6 +2,9 @@ import * as Yup from 'yup';
 import { parseISO, isAfter } from 'date-fns';
 import Delivery from '../models/Delivery';
 import DeliveryProblems from '../models/DeliveryProblems';
+import Queue from '../../lib/Queue';
+import CancellationMail from '../jobs/CancellationMail';
+import Deliveryman from '../models/Deliveryman';
 
 class DeliveryProblemsController {
   async index(req, res) {
@@ -115,7 +118,15 @@ class DeliveryProblemsController {
       return res.status(400).json({ error: 'Delivery already canceled' });
     }
 
+    const deliveryman = await Deliveryman.findByPk(delivery.deliveryman_id);
+
     const deliveryCanceled = await delivery.update({ canceled_at });
+
+    await Queue.add(CancellationMail.key, {
+      deliveryman,
+      product: delivery.product,
+      problem: problem.description,
+    });
 
     return res.json(deliveryCanceled);
   }
