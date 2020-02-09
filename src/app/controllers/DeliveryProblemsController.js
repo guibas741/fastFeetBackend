@@ -16,6 +16,29 @@ class DeliveryProblemsController {
     return res.json(deliveriesProblems);
   }
 
+  async listProblems(req, res) {
+    const { page = 1 } = req.query;
+    const { delivery_id } = req.params;
+
+    const delivery = await Delivery.findByPk(delivery_id);
+
+    if (!delivery) {
+      return res.status(401).json({ error: 'Delivery does not exists' });
+    }
+
+    const deliveryProblems = await DeliveryProblems.findOne({
+      where: {
+        delivery_id,
+      },
+      order: ['id'],
+      attributes: ['id', 'delivery_id', 'description'],
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
+
+    return res.json(deliveryProblems);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       description: Yup.string().required(),
