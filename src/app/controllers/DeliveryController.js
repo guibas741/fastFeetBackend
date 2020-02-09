@@ -41,9 +41,9 @@ class DeliveryController {
 
     const { product, recipient_id, deliveryman_id, signature_id } = req.body;
 
-    const existsRecipient = await Recipient.findByPk(recipient_id);
+    const recipient = await Recipient.findByPk(recipient_id);
 
-    if (!existsRecipient) {
+    if (!recipient) {
       return res.status(401).json({ error: 'Recipient does not exists' });
     }
 
@@ -63,7 +63,15 @@ class DeliveryController {
     await Mail.sendMail({
       to: `${deliveryman.name} <${deliveryman.email}`,
       subject: 'Nova encomenda',
-      text: 'Nova encomenda!!',
+      template: 'delivery',
+      context: {
+        deliveryman: deliveryman.name,
+        recipient: recipient.name,
+        street: recipient.street,
+        number: recipient.number,
+        city: recipient.city,
+        product,
+      },
     });
 
     return res.json(delivery);
