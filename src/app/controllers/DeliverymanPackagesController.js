@@ -77,7 +77,7 @@ class DeliverymanPackagesController {
         {
           model: File,
           as: 'signature',
-          attributes: ['id', 'path'],
+          attributes: ['id', 'path', 'url'],
         },
       ],
     });
